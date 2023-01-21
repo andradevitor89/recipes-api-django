@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000"
+    # Volumes mapping to have the docker synchronize with project directory
+    volumes:
+      - ./app:/app
+    # Default command that will be run when service start. It can be overriden when executing docker-compose
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000" 
