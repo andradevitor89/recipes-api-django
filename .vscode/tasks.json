@@ -14,8 +14,9 @@
       "group": "build"
     },
     {
-      "label": "Install requirements (venv)",
-      "command": "source venv/bin/activate && pip install -r requirements.local.txt",
+      "label": "Apply migrations (docker compose)",
+      "command": "docker-compose run --rm app sh -c \"python manage.py migrate\"",
+
       "type": "shell",
       "args": [],
       "problemMatcher": ["$tsc"],
@@ -25,8 +26,8 @@
       "group": "build"
     },
     {
-      "label": "Apply migrations (docker compose)",
-      "command": "docker-compose run --rm app sh -c \"python manage.py migrate\"",
+      "label": "Make migrations (docker compose)",
+      "command": "docker-compose run --rm app sh -c \"python manage.py makemigrations\"",
 
       "type": "shell",
       "args": [],
