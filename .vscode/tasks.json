@@ -1,46 +1,84 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Lint (docker compose)",
-            "command": "docker-compose run --rm app sh -c \"flake8\"",
-           
-            "type": "shell",
-            "args": [],
-            "problemMatcher": [
-                "$tsc"
-            ],
-            "presentation": {
-                "reveal": "always"
-            },
-            "group": "build"
-        },
-        {
-            "label": "Test (docker compose)",
-            "command": "docker-compose run --rm app sh -c \"python manage.py test\"",
-           
-            "type": "shell",
-            "args": [],
-            "problemMatcher": [
-                "$tsc"
-            ],
-            "presentation": {
-                "reveal": "always"
-            },
-            "group": "build"
-        },
-        {
-            "label": "Build (docker compose)",
-            "command": "docker-compose build",
-            "type": "shell",
-            "args": [],
-            "problemMatcher": [
-                "$tsc"
-            ],
-            "presentation": {
-                "reveal": "always"
-            },
-            "group": "build"
-        },
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Lint (docker compose)",
+      "command": "docker-compose run --rm app sh -c \"flake8\"",
+
+      "type": "shell",
+      "args": [],
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    },
+    {
+      "label": "Install requirements (venv)",
+      "command": "source venv/bin/activate && pip install -r requirements.local.txt",
+      "type": "shell",
+      "args": [],
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    },
+    {
+      "label": "Apply migrations (docker compose)",
+      "command": "docker-compose run --rm app sh -c \"python manage.py migrate\"",
+
+      "type": "shell",
+      "args": [],
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    },
+    {
+      "label": "Test (docker compose)",
+      "command": "docker-compose run --rm app sh -c \"python manage.py test\"",
+      "type": "shell",
+      "args": [],
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    },
+    {
+      "label": "Build (docker compose)",
+      "command": "docker-compose build",
+      "type": "shell",
+      "args": [],
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    },
+    {
+      "label": "Build w/ log file (docker compose)",
+      "command": "docker-compose build > build_log",
+      "type": "shell",
+      "args": [],
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    },
+    {
+      "label": "Run app (docker compose)",
+      "command": "docker-compose up",
+      "type": "shell",
+      "args": [],
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    }
+  ]
 }
