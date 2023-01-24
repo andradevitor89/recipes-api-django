@@ -21,15 +21,10 @@ class AdminSiteTests(TestCase):
         )
 
     def test_users_list(self):
-        logfile = open("test.log", "a")
         url = reverse('admin:core_user_changelist')
         res = self.client.get(url)
-        print(url, file=logfile)
-        print(res.content, file=logfile)
-
         self.assertContains(res, self.user.name)
         self.assertContains(res, self.user.email)
-        logfile.close()
 
     def test_edit_user_page(self):
         url = reverse('admin:core_user_change', args=[self.user.id])
