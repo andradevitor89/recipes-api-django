@@ -72,7 +72,7 @@
     },
     {
       "label": "Run app (docker compose)",
-      "command": "docker-compose up",
+      "command": "docker-compose up -d",
       "type": "shell",
       "args": [],
       "problemMatcher": ["$tsc"],
