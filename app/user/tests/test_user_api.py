@@ -8,7 +8,7 @@ CREATE_USER_URL = reverse('user:create')
 
 
 def create_user(**params):
-    return get_user_model.objects.create_user(
+    return get_user_model().objects.create_user(
         **params
     )
 
@@ -45,7 +45,7 @@ class PublicUserApiTests(TestCase):
 
     def test_create_user_with_too_short_password_error(self):
         payload = {
-            'email': 'email@email.com',
+            'email': 'email2@email.com',
             'password': '123',
             'name': 'Name'
         }
