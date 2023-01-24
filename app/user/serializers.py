@@ -13,5 +13,5 @@ class UserSerializer(serializers.ModelSerializer):
                 'min_length': 5}
         }
 
-        def create(self, validated_data):
-            return get_user_model().objects.create_user(**validated_data)
+    def create(self, validated_data):
+        return get_user_model().objects.create_user(**validated_data)
