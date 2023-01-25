@@ -6,6 +6,7 @@ from core.models import Recipe
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
+    """View for manage recipe APIs"""
     serializer_class = RecipeDetailSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

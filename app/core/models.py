@@ -4,7 +4,6 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin
 )
-from django.contrib.auth import get_user_model
 from django.conf import settings
 
 

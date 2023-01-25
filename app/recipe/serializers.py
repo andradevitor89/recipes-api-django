@@ -1,4 +1,3 @@
-from django.utils.translation import gettext as _
 from core.models import Recipe
 from rest_framework import serializers
 
@@ -14,4 +13,3 @@ class RecipeSerializer(serializers.ModelSerializer):
 class RecipeDetailSerializer(RecipeSerializer):
     class Meta(RecipeSerializer.Meta):
         fields = RecipeSerializer.Meta.fields + ['description']
-        # fields = super().fields + 'description'
