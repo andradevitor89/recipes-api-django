@@ -9,6 +9,11 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 RECIPES_URL = reverse('recipe:recipe-list')
+RECIPE_MOCK_OBJECT = {'title': 'Sample recipe title',
+                      'description': 'Sample recipe description',
+                      'price': Decimal('10.5'),
+                      'time_minutes': 10,
+                      'link': 'http://exammple.com/recipe.pdf'}
 
 
 def detail_url(recipe_id):
@@ -16,13 +21,7 @@ def detail_url(recipe_id):
 
 
 def create_recipe(user, **params):
-    defaults = {
-        'title': 'Sample recipe title',
-        'description': 'Sample recipe description',
-        'price': Decimal('10.5'),
-        'time_minutes': 10,
-        'link': 'http://exammple.com/recipe.pdf'
-    }
+    defaults = RECIPE_MOCK_OBJECT
     defaults.update(params)
     recipe = Recipe.objects.create(user=user, **defaults)
     return recipe
@@ -84,3 +83,14 @@ class PrivateRecipeApiTests(TestCase):
         serializer = RecipeDetailSerializer(recipe)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
+
+    def test_create_recipe(self):
+        res = self.client.post(RECIPES_URL, RECIPE_MOCK_OBJECT)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        recipe = Recipe.objects.get(id=res.data['id'])
+
+        for key, value in RECIPE_MOCK_OBJECT.items():
+            self.assertEqual(getattr(recipe, key), value)
+
+        self.assertEqual(recipe.user, self.user)
