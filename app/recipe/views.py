@@ -1,5 +1,6 @@
 from rest_framework import viewsets, mixins
-from recipe.serializers import RecipeSerializer, RecipeDetailSerializer, TagSerializer
+from recipe.serializers import (
+    RecipeSerializer, RecipeDetailSerializer, TagSerializer)
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from core.models import Recipe, Tag
