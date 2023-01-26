@@ -94,6 +94,7 @@ class PrivateTagApiTests(TestCase):
         payload = {
             'name': 'Patched name'
         }
+
         url = detail_url(tag.id)
 
         res = self.client.patch(url, payload)
@@ -136,14 +137,14 @@ class PrivateTagApiTests(TestCase):
 #         self.assertEqual(recipe.user, self.user)
 #         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-#     def test_delete(self):
-#         recipe = create_tag(user=self.user)
+    def test_delete(self):
+        tag = create_tag(user=self.user)
 
-#         url = detail_url(recipe.id)
+        url = detail_url(tag.id)
 
-#         res = self.client.delete(url)
-#         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-#         self.assertFalse(Recipe.objects.filter(id=recipe.id).exists())
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Tag.objects.filter(user=self.user).exists())
 
 #     def test_delete_other_user_recipe(self):
 #         other_user = create_user(
