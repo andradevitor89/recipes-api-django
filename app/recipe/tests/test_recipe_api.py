@@ -340,3 +340,23 @@ class PrivateRecipeApiTests(TestCase):
                 name=payload_ingredient['name'], user=self.user).exists())
 
         self.assertEqual(Ingredient.objects.all().count(), 2)
+
+    def test_create_ingredient_when_update_recipe(self):
+
+        recipe = create_recipe(self.user)
+
+        payload = {
+            'ingredients': [
+                {
+                    'name': 'Lettuce'
+                }
+            ]
+        }
+        res = self.client.patch(detail_url(recipe.id), payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        ingredients = Ingredient.objects.filter(user=self.user)
+        self.assertEqual(ingredients.count(), 1)
+        ingredient = ingredients[0]
+        self.assertIn(ingredient, recipe.ingredients.all())
