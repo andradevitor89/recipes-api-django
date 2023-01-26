@@ -14,8 +14,8 @@ def create_user(email='sample@example.com', password='passtest123'):
     return get_user_model().objects.create_user(email=email, password=password)
 
 
-def detail_url(tag_id):
-    return reverse('recipe:ingredient-detail', args=[tag_id])
+def detail_url(ingredient_id):
+    return reverse('recipe:ingredient-detail', args=[ingredient_id])
 
 
 def create_ingredient(user, **params):
@@ -66,3 +66,23 @@ class PrivateTagApiTests(TestCase):
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]['name'], ingredient.name)
         self.assertEqual(res.data[0]['id'], ingredient.id)
+
+    def test_update_ingredient(self):
+        ingredient = create_ingredient(self.user, name='Cheese')
+        payload = {
+            'name': 'Patched name'
+        }
+        res = self.client.patch(detail_url(
+            ingredient.id), payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        ingredient.refresh_from_db()
+        self.assertEqual(ingredient.name, payload['name'])
+
+    def test_delete_ingredient(self):
+        ingredient = create_ingredient(self.user, name='Cheese')
+
+        res = self.client.delete(detail_url(
+            ingredient.id))
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Ingredient.objects.all().count(), 0)

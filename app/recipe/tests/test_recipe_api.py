@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from core.models import Recipe, Tag
+from core.models import Recipe, Tag, Ingredient
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -34,6 +34,15 @@ def create_tag(user, **params):
     defaults.update(params)
 
     return Tag.objects.create(user=user, **defaults)
+
+
+def create_ingredient(user, **params):
+    defaults = {
+        'name': 'Salt'
+    }
+    defaults.update(params)
+
+    return Ingredient.objects.create(user=user, **defaults)
 
 
 def create_user(**params):
@@ -275,3 +284,59 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         # self.assertEqual(recipe.tags.all().count(), 0)
         self.assertEqual(recipe.tags.count(), 0)
+
+    def test_create_ingredients_when_create_recipe(self):
+
+        payload = RECIPE_MOCK_OBJECT.copy()
+        payload.update({
+            'ingredients': [
+                {
+                    'name': 'Salt'
+                }
+            ]
+        })
+
+        res = self.client.post(RECIPES_URL, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        recipes = Recipe.objects.filter(user=self.user)
+        self.assertEqual(recipes.count(), 1)
+        recipe = recipes[0]
+        self.assertEqual(recipe.ingredients.count(), 1)
+
+        for ingredient in payload['ingredients']:
+            self.assertTrue(recipe.ingredients.filter(
+                name=ingredient['name'], user=self.user).exists())
+
+    def test_create_recipe_with_existing_ingredient(self):
+
+        ingredient1 = create_ingredient(self.user, **{'name': 'Lemon'})
+        ingredient2 = create_ingredient(self.user, **{'name': 'Tomato'})
+        payload = RECIPE_MOCK_OBJECT.copy()
+        payload.update({
+            'ingredients': [
+                {
+                    'name': ingredient1.name
+                },
+                {
+                    'name': ingredient2.name
+                },
+            ]
+        })
+
+        res = self.client.post(RECIPES_URL, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        recipes = Recipe.objects.filter(user=self.user)
+        self.assertEqual(recipes.count(), 1)
+
+        recipe = recipes[0]
+        self.assertTrue(recipe.ingredients.count(), 2)
+        self.assertIn(ingredient1, recipe.ingredients.all())
+
+        for payload_ingredient in payload['ingredients']:
+            self.assertTrue(recipe.ingredients.filter(
+                name=payload_ingredient['name'], user=self.user).exists())
+
+        self.assertEqual(Ingredient.objects.all().count(), 2)
