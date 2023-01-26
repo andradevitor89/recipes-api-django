@@ -27,6 +27,15 @@ def create_recipe(user, **params):
     return recipe
 
 
+def create_tag(user, **params):
+    defaults = {
+        'name': 'Indian'
+    }
+    defaults.update(params)
+
+    return Tag.objects.create(user=user, **defaults)
+
+
 def create_user(**params):
     return get_user_model().objects.create_user(**params)
 
@@ -220,3 +229,49 @@ class PrivateRecipeApiTests(TestCase):
         for tag in payload['tags']:
             self.assertTrue(recipe.tags.filter(
                 name=tag['name'], user=self.user).exists())
+
+    def test_create_tag_when_updating_recipe(self):
+        recipe = create_recipe(user=self.user)
+
+        payload = {'tags': [{
+            'name': 'Indian'
+        }]}
+
+        url = detail_url(recipe.id)
+        res = self.client.patch(url, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        tag = Tag.objects.get(user=self.user, name='Indian')
+        self.assertIsNotNone(tag)
+        self.assertIn(tag, recipe.tags.all())
+
+    def test_update_recipe_assign_tag(self):
+        indian_tag = Tag.objects.create(user=self.user, name='Indian')
+        recipe = create_recipe(user=self.user)
+        recipe.tags.add(indian_tag)
+        lunch_tag = Tag.objects.create(user=self.user, name='Lunch')
+
+        payload = {'tags': [{
+            'name': 'Lunch'
+        }]}
+
+        url = detail_url(recipe.id)
+        res = self.client.patch(url, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn(lunch_tag, recipe.tags.all())
+        self.assertNotIn(indian_tag, recipe.tags.all())
+
+    def test_clear_recipes_tags(self):
+        recipe = create_recipe(user=self.user)
+        tag = create_tag(user=self.user)
+        recipe.tags.add(tag)
+
+        payload = {'tags': []}
+
+        url = detail_url(recipe.id)
+        res = self.client.patch(url, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        # self.assertEqual(recipe.tags.all().count(), 0)
+        self.assertEqual(recipe.tags.count(), 0)
