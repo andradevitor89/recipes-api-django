@@ -10,10 +10,9 @@ services:
         - DEV=true
     ports:
       - "8000:8000"
-    # Maps directory in local machine to directory in container
     volumes:
       - ./app:/app
-    # Default command that will be run when service start. It can be overriden when executing docker-compose
+      - dev-static-data:/vol/web
     command: >
       sh -c "python manage.py wait_for_db && 
             python manage.py migrate &&
@@ -37,3 +36,4 @@ services:
 
 volumes:
   dev-db-data:
+  dev-static-data:
